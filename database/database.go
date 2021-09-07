@@ -12,14 +12,14 @@ type Database interface {
 }
 
 // @Created 06/09/2021
-// @Updated
+// @Updated 07/09/2021
 type Reader interface {
-
+	FindByID(string, string, *interface{}) (error)
 }
 
 // @Created 06/09/2021
-// @Updated
+// @Updated 07/09/2021
 type Writer interface {
 	Create(*interface{}) error
-	Save()
+	UpdateByID(string, string, *interface{}) (error)
 }

@@ -69,6 +69,29 @@ func (db *Postgres) Create(model *interface{}) error {
 	return nil
 }
 
-func (db *Postgres) Save() {
+// @Created 07/09/2021
+// @Updated
+func (db *Postgres) FindByID(queryField, queryID string, data *interface{}) (error) {
 
+	query := fmt.Sprintf("%s = ?", queryField)
+
+	if err := db.postgres.Model(data).Where(query, queryID).Take(data).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// @Created 07/09/2021
+// @Updated
+func (db *Postgres) UpdateByID(queryField, queryID, updateField, updateID string, data *interface{}) (error) {
+
+	query := fmt.Sprintf("%s = ?", queryField)
+	update := fmt.Sprintf("%s = ?", updateField)
+
+	if err := db.postgres.Model(data).Where(query, queryID).Update(update, updateID).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
