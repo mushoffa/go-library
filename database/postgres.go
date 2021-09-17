@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mushoffa/go-library/config"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 
@@ -28,14 +26,14 @@ type Postgres struct {
 }
 
 // @Created 06/09/2021
-// @Updated
-func NewPostgres(c config.Config) (Database, error) {
+// @Updated 17/09/2021
+func NewPostgres(host, port, dbName, user, password string, sslmode bool) (Database, error) {
 	postgres := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=disable",
-		c.Postgres.PostgresqlHost,
-		c.Postgres.PostgresqlPort,
-		c.Postgres.PostgresqlDbName,
-		c.Postgres.PostgresqlUser,
-		c.Postgres.PostgresqlPassword,
+		host,
+		port,
+		dbName,
+		user,
+		password,
 	)
 
 	db, err := gorm.Open("postgres", postgres)

@@ -102,7 +102,17 @@ func testInitPostgresConfig() config.Config {
 } 
 
 func testInitPostgresDB() (database.Database ) {
-	db, err := database.NewPostgres(testInitPostgresConfig())
+
+	cfg := testInitPostgresConfig()
+
+	db, err := database.NewPostgres(
+		cfg.Postgres.PostgresqlHost,
+		cfg.Postgres.PostgresqlPort,
+		cfg.Postgres.PostgresqlDbName,
+		cfg.Postgres.PostgresqlUser,
+		cfg.Postgres.PostgresqlPassword,
+		cfg.Postgres.PostgresqlSSLMode,
+	)
 	if err != nil {
 		log.Println("Error: ", err)
 		return nil
