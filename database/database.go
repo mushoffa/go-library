@@ -18,8 +18,8 @@ type Reader interface {
 }
 
 // @Created 06/09/2021
-// @Updated 07/09/2021
+// @Updated 17/09/2021
 type Writer interface {
 	Create(*interface{}) error
-	UpdateByID(string, string, *interface{}) (error)
+	UpdateByID(string, string, string,*interface{}) (error)
 }
