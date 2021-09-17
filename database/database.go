@@ -1,7 +1,7 @@
 package database
 
 import (
-	"errors"
+	_ "errors"
 )
 
 // @Created 06/09/2021
@@ -14,12 +14,13 @@ type Database interface {
 // @Created 06/09/2021
 // @Updated 07/09/2021
 type Reader interface {
-	FindByID(string, string, *interface{}) (error)
+	FindByID(string, string, interface{}) (error)
 }
 
 // @Created 06/09/2021
 // @Updated 17/09/2021
 type Writer interface {
-	Create(*interface{}) error
-	UpdateByID(string, string, string,*interface{}) (error)
+	AutoMigrate(...interface{})
+	Create(interface{}) error
+	UpdateByID(string, string, string, string, interface{}) (error)
 }

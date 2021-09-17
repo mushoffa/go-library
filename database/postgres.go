@@ -22,9 +22,9 @@ const (
 
 
 // @Created 06/09/2021
-// @Updated
+// @Updated 17/09/2021
 type Postgres struct {
-	postgres *gorm.DB
+	Gorm *gorm.DB
 }
 
 // @Created 06/09/2021
@@ -44,7 +44,6 @@ func NewPostgres(c config.Config) (Database, error) {
 	}
 
 	db.LogMode(true)
-	// db.AutoMigrate(&dbmodels.User{})
 	db.DB().SetMaxOpenConns(maxOpenConns)
 	db.DB().SetConnMaxLifetime(connMaxLifetime * time.Second)
 	db.DB().SetMaxIdleConns(maxIdleConns)
@@ -57,12 +56,23 @@ func NewPostgres(c config.Config) (Database, error) {
 	return &Postgres{db}, nil
 }
 
+// @Created 17/09/2021
+func (db *Postgres) AutoMigrate(models ...interface{}) {
+	
+	for _, model := range models {
+		db.Gorm.AutoMigrate(model)
+		// go func() {
+		// 	db.Gorm.AutoMigrate(&model)
+		// }()
+	}
+}
+
 
 // @Created 06/09/2021
 // @Updated
-func (db *Postgres) Create(model *interface{}) error {
+func (db *Postgres) Create(model interface{}) error {
 
-	if err := db.postgres.Create(model).Error; err != nil {
+	if err := db.Gorm.Create(model).Error; err != nil {
 		return err
 	}
 
@@ -71,11 +81,11 @@ func (db *Postgres) Create(model *interface{}) error {
 
 // @Created 07/09/2021
 // @Updated
-func (db *Postgres) FindByID(queryField, queryID string, data *interface{}) (error) {
+func (db *Postgres) FindByID(queryField, queryID string, data interface{}) (error) {
 
 	query := fmt.Sprintf("%s = ?", queryField)
 
-	if err := db.postgres.Model(data).Where(query, queryID).Take(data).Error; err != nil {
+	if err := db.Gorm.Model(data).Where(query, queryID).Take(data).Error; err != nil {
 		return err
 	}
 
@@ -83,13 +93,17 @@ func (db *Postgres) FindByID(queryField, queryID string, data *interface{}) (err
 }
 
 // @Created 07/09/2021
-// @Updated
-func (db *Postgres) UpdateByID(queryField, queryID, updateField, updateID string, data *interface{}) (error) {
+// @Updated 17/09/2021
+func (db *Postgres) UpdateByID(queryField, queryID, updateField, updateID string, data interface{}) (error) {
 
 	query := fmt.Sprintf("%s = ?", queryField)
 	update := fmt.Sprintf("%s = ?", updateField)
 
-	if err := db.postgres.Model(data).Where(query, queryID).Update(update, updateID).Error; err != nil {
+
+	// db.Gorm.Model(data).Where(query, queryID).Update(update, updateID)
+	// db.Gorm.Model(&testStruct{}).Where("id = ?", queryID).Update("data = ?", updateID)
+
+	if err := db.Gorm.Model(data).Where(query, queryID).Update(update, updateID).Error; err != nil {
 		return err
 	}
 
