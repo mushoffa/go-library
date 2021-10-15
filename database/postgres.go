@@ -91,15 +91,10 @@ func (db *Postgres) FindByID(queryField, queryID string, data interface{}) (erro
 }
 
 // @Created 07/09/2021
-// @Updated 17/09/2021
+// @Updated 15/10/2021
 func (db *Postgres) UpdateByID(queryField, queryID, updateField, updateID string, data interface{}) (error) {
 
 	query := fmt.Sprintf("%s = ?", queryField)
-	update := fmt.Sprintf("%s = ?", updateField)
-
-
-	// db.Gorm.Model(data).Where(query, queryID).Update(update, updateID)
-	// db.Gorm.Model(&testStruct{}).Where("id = ?", queryID).Update("data = ?", updateID)
 
 	if err := db.Gorm.Model(data).Where(query, queryID).Update(update, updateID).Error; err != nil {
 		return err
