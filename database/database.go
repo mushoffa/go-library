@@ -2,6 +2,7 @@ package database
 
 import (
 	_ "errors"
+	"github.com/jinzhu/gorm"
 )
 
 // @Created 06/09/2021
@@ -12,15 +13,16 @@ type Database interface {
 }
 
 // @Created 06/09/2021
-// @Updated 07/09/2021
+// @Updated 16/10/2021
 type Reader interface {
+	GetInstance() *gorm.DB
 	FindByID(string, string, interface{}) (error)
 }
 
 // @Created 06/09/2021
-// @Updated 17/09/2021
+// @Updated 16/10/2021
 type Writer interface {
 	AutoMigrate(...interface{})
 	Create(interface{}) error
-	UpdateByID(string, string, string, string, interface{}) (error)
+	UpdateByID(string, string, string, interface{}, interface{}) (error)
 }
