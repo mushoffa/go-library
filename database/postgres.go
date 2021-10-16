@@ -56,7 +56,7 @@ func NewPostgres(host, port, dbName, user, password string, sslmode bool) (Datab
 
 // @Created 16/10/2021
 // @Updated
-func (db Postgres) GetInstance() *gorm.DB {
+func (db *Postgres) GetInstance() *gorm.DB {
 	// if(db.Gorm != nil) {
 	// 	return db.Gorm
 	// }
@@ -67,7 +67,7 @@ func (db Postgres) GetInstance() *gorm.DB {
 
 // @Created 07/09/2021
 // @Updated
-func (db Postgres) FindByID(queryField, queryID string, data interface{}) (error) {
+func (db *Postgres) FindByID(queryField, queryID string, data interface{}) (error) {
 
 	query := fmt.Sprintf("%s = ?", queryField)
 
@@ -79,7 +79,7 @@ func (db Postgres) FindByID(queryField, queryID string, data interface{}) (error
 }
 
 // @Created 17/09/2021
-func (db Postgres) AutoMigrate(models ...interface{}) {
+func (db *Postgres) AutoMigrate(models ...interface{}) {
 	
 	for _, model := range models {
 		db.Gorm.AutoMigrate(model)
@@ -92,7 +92,7 @@ func (db Postgres) AutoMigrate(models ...interface{}) {
 
 // @Created 06/09/2021
 // @Updated
-func (db Postgres) Create(model interface{}) error {
+func (db *Postgres) Create(model interface{}) error {
 
 	if err := db.Gorm.Create(model).Error; err != nil {
 		return err
@@ -103,7 +103,7 @@ func (db Postgres) Create(model interface{}) error {
 
 // @Created 07/09/2021
 // @Updated 16/10/2021
-func (db Postgres) UpdateByID(queryField, queryID, updateField string, updateID, data interface{}) (error) {
+func (db *Postgres) UpdateByID(queryField, queryID, updateField string, updateID, data interface{}) (error) {
 
 	query := fmt.Sprintf("%s = ?", queryField)
 
