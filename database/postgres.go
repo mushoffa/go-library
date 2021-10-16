@@ -57,11 +57,12 @@ func NewPostgres(host, port, dbName, user, password string, sslmode bool) (Datab
 // @Created 16/10/2021
 // @Updated
 func (db *Postgres) GetInstance() *gorm.DB {
-	if(db.Gorm != nil) {
-		return db.Gorm
-	}
+	// if(db.Gorm != nil) {
+	// 	return db.Gorm
+	// }
 
-	return nil
+	// return nil
+	return db.Gorm
 }
 
 // @Created 07/09/2021
