@@ -78,6 +78,15 @@ func (db *Postgres) FindByID(queryField, queryID string, data interface{}) (erro
 	return nil
 }
 
+// @Created 16/10/2021
+// @Updated
+func (db *Postgres) FindAll(model interface{}) error {
+	if err := db.Gorm.Find(model).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 // @Created 17/09/2021
 func (db *Postgres) AutoMigrate(models ...interface{}) {
 	

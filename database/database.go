@@ -17,6 +17,7 @@ type Database interface {
 type Reader interface {
 	GetInstance() *gorm.DB
 	FindByID(string, string, interface{}) (error)
+	FindAll(interface{}) error
 }
 
 // @Created 06/09/2021
