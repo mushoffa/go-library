@@ -13,14 +13,14 @@ type GrpcClient struct {
 }
 
 // @Created 19/10/2021
-// @Updated
+// @Updated 25/10/2021
 func NewGrpcClient(url string, opts ...grpc.DialOption) (*GrpcClient, error) {
 	conn, err := grpc.Dial(url, opts...)
 	if err != nil {
 		return nil, err
 	}
 
-	defer conn.Close()
+	// defer conn.Close()
 
 	return &GrpcClient{conn}, nil
 }
