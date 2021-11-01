@@ -11,26 +11,29 @@ import (
 
 	"github.com/mushoffa/go-library/server"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 // @Created 19/10/2021
-// @Updated
+// @Updated 01/11/2021
 type GrpcServer struct {
-	Server *grpc.Server
-	Port   int
+	Server    *grpc.Server
+	Port      int
+	ServiceFn func(grpc.ServiceRegistrar, interface{})
+	Services  interface{}
 }
 
 // @Created 19/10/2021
-// @Updated
-func NewGrpcServer(port int, opt ...grpc.ServerOption) (server.ServerService, error) {
+// @Updated 01/11/2021
+func NewGrpcServer(port int, ServiceFn func(grpc.ServiceRegistrar, interface{}), services interface{}, opt ...grpc.ServerOption) (server.ServerService, error) {
 
 	grpcServer := grpc.NewServer(opt...)
 
-	return &GrpcServer{grpcServer, port}, nil
+	return &GrpcServer{Server: grpcServer, Port: port, ServiceFn: ServiceFn, Services: services}, nil
 }
 
 // @Created 19/10/2021
-// @Updated
+// @Updated 01/11/2021
 func (s *GrpcServer) Run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -43,6 +46,9 @@ func (s *GrpcServer) Run() error {
 		log.Fatalf("Failed to listen on %v", err)
 		errChannel <- err
 	}
+
+	ServiceFn(s.Server, s.Services)
+	reflection.Register(s.Server)
 
 	go func() {
 		log.Printf("Grpc Server listening on port %v", listen.Addr())
