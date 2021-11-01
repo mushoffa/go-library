@@ -47,7 +47,7 @@ func (s *GrpcServer) Run() error {
 		errChannel <- err
 	}
 
-	ServiceFn(s.Server, s.Services)
+	s.ServiceFn(s.Server, s.Services)
 	reflection.Register(s.Server)
 
 	go func() {
