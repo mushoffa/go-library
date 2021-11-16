@@ -1,7 +1,7 @@
 package redis_test
 
 import (
-	"context"
+	// "context"
 	"fmt"
 	"testing"
 
@@ -23,16 +23,16 @@ func TestNewRedisClient_Success(t *testing.T) {
 		t.Errorf("Error creating redis client: %v", err)
 	}
 
-	fmt.Println("Redis PING: ", r.Ping(context.Background()))
+	fmt.Println("Redis PING: ", r.Ping())
 }
 
 // @Created 16/11/2021
 // @Updated
-func TestNewRedisRepository_Success(t *testing.T) {
-	repository, err := redis.NewRedisRepository(redisHost, redisPassword, redisDB)
-	if err != nil {
-		t.Errorf("Error creating redis repository: %v", err)
-	}
+// func TestNewRedisRepository_Success(t *testing.T) {
+// 	repository, err := redis.NewRedisRepository(redisHost, redisPassword, redisDB)
+// 	if err != nil {
+// 		t.Errorf("Error creating redis repository: %v", err)
+// 	}
 
-	fmt.Println("Redis repository PING: ", repository.Ping())
-}
+// 	fmt.Println("Redis repository PING: ", repository.Ping())
+// }

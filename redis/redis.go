@@ -50,7 +50,7 @@ type RedisClient struct {
 
 // @Created 16/11/2021
 // @Updated
-func NewRedisClient(host, password string, db int) (*redis.Client, error){
+func NewRedisClient(host, password string, db int) (RedisService, error){
 
 	if host == "" {
 		return nil, fmt.Errorf("Redis host cannot be empty")
@@ -66,7 +66,7 @@ func NewRedisClient(host, password string, db int) (*redis.Client, error){
     	return nil, fmt.Errorf("Failed connecting to redis: %v", err)
     }
 
-    return r, nil
+    return &RedisClient{r}, nil
 }
 
 // @Created 16/11/2021
@@ -83,14 +83,14 @@ func NewRedisClusterClient(opt *redis.ClusterOptions) (*redis.ClusterClient, err
 
 // @Created 16/11/2021
 // @Updated
-func NewRedisRepository(host, password string, db int) (RedisService, error) {
-	r, err := NewRedisClient(host, password, db)
-	if err != nil {
-		return nil, err
-	}
+// func NewRedisRepository(host, password string, db int) (RedisService, error) {
+// 	r, err := NewRedisClient(host, password, db)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return &RedisClient{r}, nil
-}
+// 	return &RedisClient{r}, nil
+// }
 
 // @Created 16/11/2021
 // @Updated
