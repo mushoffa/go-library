@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"gopkg.in/redis.v5"
+	"github.com/go-redis/redis/v8"
 )
 
 // @Created 30/11/2021
@@ -27,7 +27,7 @@ func NewRedisClusterClient(opt *redis.ClusterOptions) (RedisClusterService, erro
 	r := redis.NewClusterClient(opt)
 
 	if _, err := r.Ping(context.Background()).Result(); err != nil {
-		return nil, fmt.Errorf("Failed connecting to redis cluser: %v", err)
+		return nil, fmt.Errorf("Failed connecting to redis clusetr: %v", err)
 	}
 
 	return &RedisCluster{r}, nil

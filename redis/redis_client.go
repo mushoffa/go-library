@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"gopkg.in/redis.v5"
+	"github.com/go-redis/redis/v8"
 )
 
 // @Created 30/11/2021
