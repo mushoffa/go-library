@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"time"
@@ -15,7 +16,7 @@ type CloudStorageService interface {
 	GetInstance() *storage.Client
 	CreateBucket(string) error
 	UploadFile(multipart.File, string, string) error
-	DownloadFile() error
+	DownloadFile(string, string) ([]byte, error)
 }
 
 type storage struct {
@@ -24,7 +25,7 @@ type storage struct {
 	bucket 		string
 }
 
-func NewCloudStorageClient(projectID, bucketName string) (CloudStorageService, error) {
+func NewCloudStorageClient(projectID string) (CloudStorageService, error) {
 	// Creates Google Cloud Storage client agent
 	client, err := storage.NewClient(context.Background())
 	if err != nil {
@@ -33,7 +34,7 @@ func NewCloudStorageClient(projectID, bucketName string) (CloudStorageService, e
 
 	defer client.Close()
 
-	return &storage{client, projectID, bucketName}, nil
+	return &storage{client, projectID}, nil
 }
 
 func (g *storage) GetInstance() *storage.Client {
@@ -79,6 +80,23 @@ func (g *storage) UploadFile(file multipart.File, folderName, fileName string) e
 	return nil
 }
 
-func (g *storage) DownloadFile() error {
-	return nil
+func (g *storage) DownloadFile(bucketName, fileName string) ([]byte, error) {
+	ctx := context.Background()	
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+    defer cancel()
+
+    rc, err := g.client.Bucket(bucketName).Object(fileName).NewReader(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rc.Close()
+
+	dataFile, err := ioutil.ReadAll(rc)
+	if err != nil {
+		return nil, err
+	}
+
+	return dataFile nil
 }
