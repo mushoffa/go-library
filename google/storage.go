@@ -15,14 +15,13 @@ import (
 type CloudStorageService interface {
 	GetInstance() *storage.Client
 	CreateBucket(string) error
-	UploadFile(multipart.File, string, string) error
+	UploadFile(multipart.File, string, string, string) error
 	DownloadFile(string, string) ([]byte, error)
 }
 
-type storage struct {
+type gcstorage struct {
 	client 		*storage.Client
 	id 			string
-	bucket 		string
 }
 
 func NewCloudStorageClient(projectID string) (CloudStorageService, error) {
@@ -34,14 +33,14 @@ func NewCloudStorageClient(projectID string) (CloudStorageService, error) {
 
 	defer client.Close()
 
-	return &storage{client, projectID}, nil
+	return &gcstorage{client, projectID}, nil
 }
 
-func (g *storage) GetInstance() *storage.Client {
+func (g *gcstorage) GetInstance() *storage.Client {
 	return g.client
 }
 
-func (g *storage) CreateBucket(bucketName string) error {
+func (g *gcstorage) CreateBucket(bucketName string) error {
 	ctx := context.Background()
 
 	// Creates the new bucket.
@@ -58,7 +57,7 @@ func (g *storage) CreateBucket(bucketName string) error {
 	return nil
 }
 
-func (g *storage) UploadFile(file multipart.File, folderName, fileName string) error {
+func (g *gcstorage) UploadFile(file multipart.File, bucketName, folderName, fileName string) error {
 	ctx := context.Background()
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
@@ -66,7 +65,7 @@ func (g *storage) UploadFile(file multipart.File, folderName, fileName string) e
 
 	filePath := folderName + "/" + fileName
 
-	wc := g.client.Bucket(g.bucket).Object(filePath).NewWriter(ctx)
+	wc := g.client.Bucket(bucketName).Object(filePath).NewWriter(ctx)
 	if _, err := io.Copy(wc, file); err != nil {
         return fmt.Errorf("io.Copy: %v", err)
     }
@@ -80,7 +79,7 @@ func (g *storage) UploadFile(file multipart.File, folderName, fileName string) e
 	return nil
 }
 
-func (g *storage) DownloadFile(bucketName, fileName string) ([]byte, error) {
+func (g *gcstorage) DownloadFile(bucketName, fileName string) ([]byte, error) {
 	ctx := context.Background()	
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
@@ -98,5 +97,5 @@ func (g *storage) DownloadFile(bucketName, fileName string) ([]byte, error) {
 		return nil, err
 	}
 
-	return dataFile nil
+	return dataFile, nil
 }
