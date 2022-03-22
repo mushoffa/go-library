@@ -10,13 +10,16 @@ import (
 	"time"
 
 	"cloud.google.com/go/storage"
+	"google.golang.org/api/iterator"
 )
 
 type CloudStorageService interface {
 	GetInstance() *storage.Client
 	CreateBucket(string) error
+	ListBucket() ([]string, error)
 	UploadFile(multipart.File, string, string, string) error
 	DownloadFile(string, string) ([]byte, error)
+	CloseClient()
 }
 
 type gcstorage struct {
@@ -31,15 +34,15 @@ func NewCloudStorageClient(projectID string) (CloudStorageService, error) {
 		log.Fatalf("Failed to create client: %v", err)
 	}
 
-	defer client.Close()
-
 	return &gcstorage{client, projectID}, nil
 }
 
+// GetInstance ...
 func (g *gcstorage) GetInstance() *storage.Client {
 	return g.client
 }
 
+// CreateBucket ...
 func (g *gcstorage) CreateBucket(bucketName string) error {
 	ctx := context.Background()
 
@@ -57,6 +60,33 @@ func (g *gcstorage) CreateBucket(bucketName string) error {
 	return nil
 }
 
+// ListBucket ...
+func (g *gcstorage) ListBucket() ([]string, error) {
+	ctx := context.Background()
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+
+	var buckets []string
+	it := g.client.Buckets(ctx, g.id)
+	for {
+		battrs, err := it.Next()
+        if err == iterator.Done {
+            break
+        }
+
+        if err != nil {
+        	return nil, err
+        }
+
+        buckets = append(buckets, battrs.Name)
+	}
+
+	return buckets, nil
+}
+
+
+// UploadFile ...
 func (g *gcstorage) UploadFile(file multipart.File, bucketName, folderName, fileName string) error {
 	ctx := context.Background()
 
@@ -79,6 +109,7 @@ func (g *gcstorage) UploadFile(file multipart.File, bucketName, folderName, file
 	return nil
 }
 
+// DownloadFile ...
 func (g *gcstorage) DownloadFile(bucketName, fileName string) ([]byte, error) {
 	ctx := context.Background()	
 
@@ -98,4 +129,8 @@ func (g *gcstorage) DownloadFile(bucketName, fileName string) ([]byte, error) {
 	}
 
 	return dataFile, nil
+}
+
+func (g *gcstorage) CloseClient() {
+	g.client.Close()
 }
