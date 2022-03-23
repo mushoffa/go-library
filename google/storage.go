@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
+	// "io/ioutil"
 	"log"
 	"mime/multipart"
+	"os"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -116,6 +117,12 @@ func (g *gcstorage) DownloadFile(bucketName, fileName string) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
     defer cancel()
 
+    // Save image to file system
+    f, err := os.Create("./ktp2.jpeg")
+    if err != nil {
+    	return nil, err
+    }
+
     rc, err := g.client.Bucket(bucketName).Object(fileName).NewReader(ctx)
 	if err != nil {
 		return nil, err
@@ -123,12 +130,21 @@ func (g *gcstorage) DownloadFile(bucketName, fileName string) ([]byte, error) {
 
 	defer rc.Close()
 
-	dataFile, err := ioutil.ReadAll(rc)
-	if err != nil {
+	if _, err := io.Copy(f, rc); err != nil {
 		return nil, err
 	}
 
-	return dataFile, nil
+	if err := f.Close(); err != nil {
+		return nil, err
+	}
+
+	// dataFile, err := ioutil.ReadAll(rc)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// return dataFile, nil
+	return nil, nil
 }
 
 func (g *gcstorage) CloseClient() {
