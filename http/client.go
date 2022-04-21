@@ -19,7 +19,8 @@ const (
 )
 
 type HttpClientService interface {
-
+	Get(string, net.Header) ([]byte, error)
+	Post(string, interface{}, net.Header) ([]byte, error)
 }
 
 type HttpClient struct {
