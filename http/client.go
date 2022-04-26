@@ -3,7 +3,8 @@ package http
 import (
 	"crypto/tls"
 	"time"
-	net "net/http"
+	"net"
+	http1 "net/http"
 
 	"github.com/parnurzeal/gorequest"
 )
@@ -19,8 +20,9 @@ const (
 )
 
 type HttpClientService interface {
-	Get(string, net.Header) ([]byte, error)
-	Post(string, interface{}, net.Header) ([]byte, error)
+	Get(string, http1.Header) ([]byte, error)
+	Post(string, interface{}, http1.Header) ([]byte, error)
+	IsNetworkTimeout(error) bool
 }
 
 type HttpClient struct {
@@ -52,7 +54,7 @@ func (c *HttpClient) RetryBad(retry int) *HttpClient {
 	return c
 }
 
-func (c *HttpClient) Get(url string, headers net.Header) ([]byte, error) {
+func (c *HttpClient) Get(url string, headers http1.Header) ([]byte, error) {
 	request := gorequest.New()
 	request.SetDebug(c.isDebuggable)
 	agent := request.Get(url)
@@ -63,7 +65,7 @@ func (c *HttpClient) Get(url string, headers net.Header) ([]byte, error) {
 
 	_, body, errs := agent.
 		Timeout(c.timeout).
-		Retry(c.retryBad, time.Second, net.StatusInternalServerError).
+		Retry(c.retryBad, time.Second, http1.StatusInternalServerError).
 		End()
 
 	if errs != nil {
@@ -73,7 +75,7 @@ func (c *HttpClient) Get(url string, headers net.Header) ([]byte, error) {
 	return []byte(body), nil
 }
 
-func (c *HttpClient) Post(url string, jsonData interface{}, headers net.Header) ([]byte, error) {
+func (c *HttpClient) Post(url string, jsonData interface{}, headers http1.Header) ([]byte, error) {
 	request := gorequest.New()
 	request.SetDebug(c.isDebuggable)
 
@@ -91,7 +93,7 @@ func (c *HttpClient) Post(url string, jsonData interface{}, headers net.Header) 
 	_, body, errs := agent.
 		Send(jsonData).
 		Timeout(c.timeout).
-		Retry(c.retryBad, time.Second, net.StatusInternalServerError).
+		Retry(c.retryBad, time.Second, http1.StatusInternalServerError).
 		End()
 
 	if errs != nil {
@@ -99,4 +101,12 @@ func (c *HttpClient) Post(url string, jsonData interface{}, headers net.Header) 
 	}
 
 	return []byte(body), nil
+}
+
+func (c *HttpClient) IsNetworkTimeout(err error) bool {
+	if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
+		return true
+	}
+
+	return false
 }
