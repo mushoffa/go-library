@@ -3,6 +3,7 @@ package google
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"cloud.google.com/go/pubsub"
 )
@@ -21,7 +22,7 @@ func NewPubSubClient(projectID string) (PubSubService, error) {
 
 	client, err := pubsub.NewClient(ctx, projectID)
 	if err != nil {
-		return nil, errors.New("Error creating Google Pub/Sub client: %v", err)
+		return nil, errors.New(fmt.Sprintf("Error creating Google Pub/Sub client: %v", err))
 	}
 
 	return &gcpubsub{client}, nil
@@ -36,7 +37,7 @@ func (g *gcpubsub) CreateTopic(topicID string) (*pubsub.Topic, error) {
 
 	topic, err := g.client.CreateTopic(ctx, topicID)
 	if err != nil {
-		return nil, errors.New("Error creating topic: %v", err)
+		return nil, errors.New(fmt.Sprintf("Error creating topic: %v", err))
 	}
 
 	return topic, nil
