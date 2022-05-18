@@ -17,6 +17,7 @@ import (
 type CloudStorageService interface {
 	GetInstance() *storage.Client
 	CreateBucket(string) error
+	SetBucket(string)
 	ListBucket() ([]string, error)
 	UploadFile(multipart.File, string, string, string) error
 	DownloadFile(string, string) ([]byte, error)
@@ -24,8 +25,9 @@ type CloudStorageService interface {
 }
 
 type gcstorage struct {
-	client 		*storage.Client
-	id 			string
+	client *storage.Client
+	id string
+	bucket string
 }
 
 func NewCloudStorageClient(projectID string) (CloudStorageService, error) {
@@ -35,7 +37,7 @@ func NewCloudStorageClient(projectID string) (CloudStorageService, error) {
 		log.Fatalf("Failed to create client: %v", err)
 	}
 
-	return &gcstorage{client, projectID}, nil
+	return &gcstorage{client, projectID, ""}, nil
 }
 
 // GetInstance ...
@@ -59,6 +61,10 @@ func (g *gcstorage) CreateBucket(bucketName string) error {
 	}
 
 	return nil
+}
+
+func (g *gcstorage) SetBucket(bucketName string) {
+	g.bucket = bucketName
 }
 
 // ListBucket ...

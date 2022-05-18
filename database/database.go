@@ -1,10 +1,5 @@
 package database
 
-import (
-	_ "errors"
-	"github.com/jinzhu/gorm"
-)
-
 // @Created 06/09/2021
 // @Updated
 type Database interface {
@@ -13,9 +8,9 @@ type Database interface {
 }
 
 // @Created 06/09/2021
-// @Updated 16/10/2021
+// @Updated 18/05/2022
 type Reader interface {
-	GetInstance() *gorm.DB
+	GetInstance() interface{}
 	FindByID(string, string, interface{}) (error)
 	FindAll(interface{}) error
 }
