@@ -84,7 +84,7 @@ func (c *HttpClient) Post(url string, jsonData interface{}, headers http1.Header
 	}
 
 	agent := request.Post(url)
-	agent.Header.Add("Content-Type", "application/json")
+	//agent.Header.Add("Content-Type", "application/json")
 
 	if headers != nil {
 		//agent.Header = headers
