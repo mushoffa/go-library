@@ -60,7 +60,7 @@ func (c *HttpClient) Get(url string, headers http1.Header) ([]byte, error) {
 	agent := request.Get(url)
 
 	if headers != nil {
-		agent.Header = headers
+		//agent.Header = headers
 	}
 
 	_, body, errs := agent.
@@ -84,10 +84,10 @@ func (c *HttpClient) Post(url string, jsonData interface{}, headers http1.Header
 	}
 
 	agent := request.Post(url)
-	agent.Header.Set("Content-Type", "application/json")
+	agent.Header.Add("Content-Type", "application/json")
 
 	if headers != nil {
-		agent.Header = headers
+		//agent.Header = headers
 	}
 
 	_, body, errs := agent.
